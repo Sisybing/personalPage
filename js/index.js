@@ -1,4 +1,16 @@
-window.onload=function (){
+//ready事件，兼容IE
+(function (){
+	if(document.addEventListener){
+		document.addEventListener('DOMContentLoaded', main , false);
+	}else{
+		document.attachEvent('onreadystatechange',function(){
+			if(document.readyState =='complete'){
+				main();
+			}
+		});
+	}
+})();
+function main (){
 	//弹性导航模块 
 	(function (){
 		var navList=document.getElementById('navList');
