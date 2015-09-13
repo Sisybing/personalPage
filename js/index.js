@@ -360,7 +360,139 @@ window.onload=function (){
 			oName.innerHTML=aSongs[n%3];
 		}
 	})();
+	//跨域获取百度搜索数据模块 
+	;(function (){
+		bdList();
+	})();
 };
+//跨域获取百度搜索数据
+function bdList(){
+	var oT=document.getElementById('bdInp');
+	var oUl=document.getElementById('baiduList');
+	var oBtn=document.getElementById('searchBtn');
+	var iNow=-1;
+	var oldValue='';
+	oT.onfocus=function (){
+		oT.value='';
+		oT.style.borderColor='#B76C9D';
+	}
+	oT.onblur=blur;
+	function blur(){
+		setTimeout(function (){
+			oUl.style.display='none';
+			oT.value='百度一下，你就知道';
+			oT.style.borderColor='#967ADE';
+		},200);
+	}
+	oT.onkeyup=function(ev){
+		var oEvent=ev || event;
+		if(oEvent.keyCode==40 || oEvent.keyCode==38)return;
+		//回车搜索
+		if(oEvent.keyCode==13){
+			window.open('https://www.baidu.com/s?wd='+oT.value,'_self');
+			oT.value='';
+		}
+		jsonp({
+			url:'https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su',
+			data:{
+				wd:oT.value
+			},
+			success:function(json){
+				var arr=json.s;
+				oUl.innerHTML='';
+				if(arr.length){
+					oUl.style.display='block';
+				}else{
+					oUl.style.display='none';	
+				}
+				for(var i=0; i<arr.length; i++){
+					var oLi=document.createElement('li');
+					oLi.innerHTML=arr[i];
+					oUl.appendChild(oLi);
+					//给li加事件
+					(function(index){
+						oLi.onmouseover=function(){
+							for(var i=0; i<oUl.children.length; i++){
+								oUl.children[i].className='';
+							}
+							this.className='on';	
+							iNow=index;
+						};
+						oLi.onclick=function(){
+							window.open('https://www.baidu.com/s?wd='+this.innerHTML,'_self');
+							oT.value='';
+						};
+					})(i);
+				}
+			}	
+		});	
+		oldValue=oT.value;
+	};	
+	oT.onkeydown=function(ev){
+		var aLi=oUl.children;
+		var oEvent=ev || event;
+		if(oEvent.keyCode==40){
+			iNow++;
+			if(iNow==aLi.length)iNow=-1;
+			
+			for(var i=0; i<aLi.length; i++){
+				aLi[i].className='';
+			}
+			if(iNow==-1){
+				oT.value=oldValue;
+			}else{
+				aLi[iNow].className='on';
+				oT.value=aLi[iNow].innerHTML;
+			}	
+		}
+		if(oEvent.keyCode==38){
+			iNow--;
+			if(iNow==-2)iNow=aLi.length-1;
+			for(var i=0; i<aLi.length; i++){
+				aLi[i].className='';
+			}
+			if(iNow==-1){
+				oT.value=oldValue;
+			}else{
+				aLi[iNow].className='on';
+				oT.value=aLi[iNow].innerHTML;
+			}
+			return false;	
+		}
+	};
+	//点击搜索
+	oBtn.onclick=function(){
+		window.open('https://www.baidu.com/s?wd='+oT.value,'_self');
+		oT.value='';	
+	};
+}
+//JSONP 
+function json2url(json){
+	var arr=[];
+	for(var name in json){
+		arr.push(name+'='+json[name]);
+	}
+	return arr.join('&');
+}
+function jsonp(json){
+	json=json || {};
+	if(!json.url)return;
+	json.data=json.data || {};
+	json.cbName=json.cbName || 'cb';
+	var fnName=('jsonp_'+Math.random()).replace('.','');
+	window[fnName]=function(data){
+		json.success && json.success(data);
+		//删除
+		oHead.removeChild(oS);
+		window[fnName]=null;
+	};
+	json.data[json.cbName]=fnName;
+	var oS=document.createElement('script');
+	oS.src=json.url+'?'+json2url(json.data);
+	var oHead=document.getElementsByTagName('head')[0];
+	oHead.appendChild(oS);
+}
+
 
 //sfq效果模块
 function sfq(obj1,obj2){

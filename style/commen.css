@@ -33,10 +33,11 @@ margin-left: 10px; padding-left: 5px; border-right: none; color: #ccc;}
 margin-top: 25px; text-align: center; line-height: 32px; cursor: pointer;}
 .searchBtn:hover{background: #B76C9D; color: #fff;}
 .baiduList{ position: absolute; left: 359px; top: 109px;border:1px solid #aaa; display: none;
-z-index: 100;}
+z-index: 100; background: #fff;}
 .baiduList.on{display: block;}
 .baiduList li{width: 254px; height: 30px;padding-left: 10px;
-line-height: 30px; font-family: '黑体'; font-size: 14px;}
+line-height: 30px; font-family: '黑体'; font-size: 14px; cursor: pointer;}
+.baiduList li.on{ background: #ccc;}
 /*header style*/
 .header{width: 100%;height: 490px; background: #fff; border-radius: 10px; margin-top: 20px;
 padding-top: 10px;}
